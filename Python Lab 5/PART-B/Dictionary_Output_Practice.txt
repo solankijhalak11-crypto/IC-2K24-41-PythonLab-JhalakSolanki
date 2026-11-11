@@ -1,0 +1,175 @@
+# Part B: Predict the Output – Python Dictionaries
+
+## Q1. Dictionary Aliasing
+
+### Code
+```python
+record = {"x": 10, "y": 20}
+another = record
+another["z"] = 30
+print(len(record))
+```
+
+### Output
+```text
+3
+```
+
+### Explanation
+The statement `another = record` does not make a separate dictionary. Both names point to the same dictionary. Therefore, adding `"z"` through `another` also changes `record`. It now contains three items.
+
+---
+
+## Q2. Shallow Copy
+
+### Code
+```python
+data = {"items": [4]}
+new_data = data.copy()
+new_data["items"].append(8)
+print(data)
+```
+
+### Output
+```text
+{'items': [4, 8]}
+```
+
+### Explanation
+The `copy()` method makes a shallow copy. The outer dictionaries are separate, but the list inside them is shared. When `8` is added through `new_data`, the list visible through `data` changes too.
+
+---
+
+## Q3. Dictionary Comprehension with a Condition
+
+### Code
+```python
+result = {letter: number for letter, number in zip("pqr", range(3)) if number}
+print(result)
+```
+
+### Output
+```text
+{'q': 1, 'r': 2}
+```
+
+### Explanation
+`zip()` combines the letters and numbers as `p: 0`, `q: 1`, and `r: 2`. The condition `if number` removes the pair with value `0`, because zero is treated as false.
+
+---
+
+## Q4. The `setdefault()` Method
+
+### Code
+```python
+details = {"name": "Riya"}
+print(details.setdefault("name", "Aman"),
+      details.setdefault("city", "Indore"), details)
+```
+
+### Output
+```text
+Riya Indore {'name': 'Riya', 'city': 'Indore'}
+```
+
+### Explanation
+The first call finds that `"name"` is already present, so it returns the existing value `"Riya"`. The second call does not find `"city"`, so it adds `"city": "Indore"` to the dictionary and returns `"Indore"`.
+
+---
+
+## Q5. Equivalent Dictionary Keys
+
+### Code
+```python
+values = {1: "first", 1.0: "second", True: "third"}
+print(values, len(values))
+```
+
+### Output
+```text
+{1: 'third'} 1
+```
+
+### Explanation
+In Python, `1`, `1.0`, and `True` compare as equal and have the same hash value. Python treats them as the same dictionary key. Each new value replaces the previous value, so only one entry remains.
+
+---
+
+## Q6. Removing an Item During Dictionary Iteration
+
+### Code
+```python
+marks = {"Math": 75, "Science": 40, "English": 82}
+
+for subject in marks:
+    if marks[subject] == 40:
+        del marks[subject]
+```
+
+### Result
+```text
+RuntimeError: dictionary changed size during iteration
+```
+
+### Explanation
+The loop is going through the dictionary while the code deletes an item from it. This changes the dictionary's size during iteration, so Python raises a `RuntimeError`.
+
+A safe approach is to loop over a separate list of keys:
+
+```python
+marks = {"Math": 75, "Science": 40, "English": 82}
+
+for subject in list(marks):
+    if marks[subject] == 40:
+        del marks[subject]
+
+print(marks)
+```
+
+### Output of the corrected code
+```text
+{'Math': 75, 'English': 82}
+```
+
+---
+
+## Q7. The `pop()` and `popitem()` Methods
+
+### Code
+```python
+stock = {"pen": 12, "book": 5}
+print(stock.pop("pencil", None), stock.popitem())
+```
+
+### Output
+```text
+None ('book', 5)
+```
+
+### Explanation
+`pop("pencil", None)` returns `None` because `"pencil"` is not in the dictionary and a default value was provided. `popitem()` removes and returns the last inserted key-value pair, which is `("book", 5)`.
+
+---
+
+## Q8. Dictionary Comprehension with Repeated Values
+
+### Code
+```python
+original = {"red": 1, "blue": 1}
+reverse = {value: key for key, value in original.items()}
+print(reverse)
+```
+
+### Output
+```text
+{1: 'blue'}
+```
+
+### Explanation
+The comprehension uses the original values as the new keys. Both entries have the value `1`, so they create the same key in the new dictionary. The later entry replaces the earlier one, leaving `{1: 'blue'}`.
+
+---
+
+## Conclusion
+
+These examples explain how dictionary references and shallow copies work. They also show dictionary comprehensions, the `setdefault()`, `pop()` and `popitem()` methods, equivalent keys, and the error caused by changing a dictionary's size during iteration.
