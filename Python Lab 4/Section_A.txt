@@ -1,0 +1,9 @@
+Section A: Before You Start
+
+1. What can make one program faster than another if both give the same result?
+
+A program can run faster when it avoids repeated work and uses a suitable method to solve the problem. The number of operations matters more than just the number of code lines.
+
+2. Name a Python feature that helps prevent writing the same code again.
+
+A function is useful for this. We can place instructions inside a function and call it whenever we need those instructions.
