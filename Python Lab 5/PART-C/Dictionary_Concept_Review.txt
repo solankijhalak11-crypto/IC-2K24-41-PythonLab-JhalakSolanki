@@ -1,0 +1,162 @@
+PART C: REASONING QUESTIONS AND ANSWERS
+Topic: Python Dictionaries
+
+Q1. What happens when we write `d2 = d`? Explain how assignment, shallow copying and deep copying are different. Which method is suitable for making an independent copy of a student database with nested records?
+
+Answer:
+When we write `d2 = d`, Python does not make another dictionary. Both variables point to the same dictionary. If we change it using either variable, the same dictionary is affected.
+
+A shallow copy creates a new outer dictionary, but objects inside it (such as nested dictionaries or lists) are still shared. We can make one using `d.copy()`.
+
+A deep copy creates a separate copy of the dictionary and its nested objects as well. It can be made with:
+
+```python
+import copy
+d2 = copy.deepcopy(d)
+```
+
+For a student database that contains nested information such as subject marks, `copy.deepcopy()` is the suitable choice when the new copy must be independent of the original.
+
+----------------------------------------------------------------
+
+Q2. Why do dictionary keys need to be hashable? From the following values, which ones can be dictionary keys: `[1, 2]`, `(1, 2)`, `{1, 2}`, and `"12"`?
+
+Answer:
+Python uses a hash value to locate dictionary keys efficiently. A key must be hashable, which means its hash value must remain stable.
+
+- `[1, 2]`: Not allowed. A list can be changed, so it is not hashable.
+- `(1, 2)`: Allowed. This tuple contains hashable integer values.
+- `{1, 2}`: Not allowed. A set is mutable and unhashable.
+- `"12"`: Allowed. A string is hashable.
+
+Remember: a tuple can be used as a key only when all the elements inside it are hashable.
+
+----------------------------------------------------------------
+
+Q3. How are `d[key]` and `d.get(key)` different when reading a value from a dictionary? Give an example of when each is useful.
+
+Answer:
+`d[key]` gives the value stored for the requested key. If that key is missing, Python raises a `KeyError`.
+
+`d.get(key)` gives the value when the key exists. If it does not exist, it returns `None` by default. We can also provide our own default value using `d.get(key, default)`.
+
+Examples:
+
+```python
+student_name = students[101]["name"]
+frequency[word] = frequency.get(word, 0) + 1
+city = contacts.get("Anita", {}).get("city", "Unknown")
+```
+
+Use square brackets when you are sure the key is present. Use `.get()` when a key may be missing and you want to provide a default instead of getting an error.
+
+----------------------------------------------------------------
+
+Q4. Explain the difference between `d[key] = value` and `d.update()`. When would you prefer `update()`?
+
+Answer:
+`d[key] = value` adds one key-value pair or changes the value of one existing key.
+
+`d.update()` can add or change multiple key-value pairs in one call.
+
+Example:
+
+```python
+employee["salary"] = 45000
+
+employee.update({
+    "department": "IT",
+    "salary": 45000
+})
+```
+
+The `update()` method is useful when several details need to be added or changed together.
+
+----------------------------------------------------------------
+
+Q5. How can we make a new dictionary of employees earning less than 50,000 after applying a 10% salary increase, while keeping the original employee data unchanged?
+
+Answer:
+We can use a dictionary comprehension with a condition to select employees whose salary is below 50,000. The expression `{**emp, ...}` makes a new inner dictionary for each selected employee, so the original employee records are not changed.
+
+Example:
+
+```python
+raised = {
+    emp_id: {
+        **emp,
+        "salary": emp["salary"] * 1.10
+    }
+    for emp_id, emp in employees.items()
+    if emp["salary"] < 50000
+}
+```
+
+This is useful when we need a separate result for comparison or reporting. If we want the salary change to be permanent, we would update the original dictionary instead.
+
+----------------------------------------------------------------
+
+Q6. Why can removing dictionary keys inside a loop over the same dictionary cause an error? Show two safe ways to remove entries whose values are below 40.
+
+Answer:
+When a key is deleted, the size of the dictionary changes. If we are directly looping through that dictionary at the same time, Python can raise a `RuntimeError`.
+
+One safe way is to loop over a separate list of keys:
+
+```python
+for key in list(d.keys()):
+    if d[key] < 40:
+        del d[key]
+```
+
+Another way is to create a new dictionary containing only the required entries:
+
+```python
+d = {
+    key: value
+    for key, value in d.items()
+    if value >= 40
+}
+```
+
+Both approaches avoid changing the dictionary while iterating over its live keys.
+
+----------------------------------------------------------------
+
+Q7. Suppose each book record contains the IDs of members who borrowed it. How can we create a new dictionary that stores each member ID with the titles of all books borrowed by that member? Why should the values be lists?
+
+Answer:
+We can create an empty dictionary and go through every book. For each member in that book's `issued_to` list, we add the book title to that member's list.
+
+Example:
+
+```python
+member_books = {}
+
+for isbn, book in books.items():
+    for member in book["issued_to"]:
+        member_books.setdefault(member, []).append(book["title"])
+```
+
+The values should be lists because one member can borrow more than one book. A list lets us store all those book titles under the same member ID.
+
+----------------------------------------------------------------
+
+Q8. Compare the average lookup time of a dictionary with searching through a list. When is a reverse phone directory useful?
+
+Answer:
+A dictionary lookup takes O(1) average time. Searching through a list takes O(n) time because Python may need to check the items one by one until it finds the required value.
+
+A reverse phone directory stores phone numbers as keys and contact names as values.
+
+Example:
+
+```python
+reverse = {
+    phone: name
+    for name, data in contacts.items()
+    for phone in data["phones"]
+}
+```
+
+Creating this reverse dictionary takes time based on the total number of phone numbers. It is useful when we need to search by phone number many times. If we only need to do one search, checking the contacts directly may be simpler.
